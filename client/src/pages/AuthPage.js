@@ -15,7 +15,10 @@ export const AuthPage = () =>{
         message(error);
         clearError();
     }, [error, message, clearError]);
-
+    
+    useEffect(() => {
+        window.M.updateTextFields();
+    }, [])
     const changeHandler = event => {
         setForm({ ...form, [event.target.name]: event.target.value });
     }
@@ -42,7 +45,7 @@ export const AuthPage = () =>{
     }
 
     return(
-        <div className="auth-window">
+        <div className="center-window">
             <header>Авторизация</header>
             <div>
                 <form className="form">
