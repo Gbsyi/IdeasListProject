@@ -1,16 +1,17 @@
-const {Router} = require('express');
-const {Idea} = require('../models/Idea');
+const {Router, urlencoded} = require('express');
+const Idea = require('../models/Idea');
 const router = Router();
 const auth = require('../middleware/auth');
 
-router.post('/create', async (req, res) =>{
+router.post('/create', auth, async (req, res) =>{
     try{
         const idea = new Idea({
-            title: req.title,
-            text: req.text,
-            date: req.date,
-            owner: req.user.userId
+            title: req.body.title,
+            text: req.body.text,
+            owner: req.body.userId
         })
+        await idea.save(); 
+        res.status(201).json({ createdId:idea.id });
     }
     catch (e) {
         res.status(500).json({message: e.message});
@@ -27,7 +28,7 @@ router.get('/', auth,  async (req,res) => {
     } 
 });
 
-router.get('/:id', async (req,res) => {
+router.get('/:id', auth, async (req,res) => {
     try{
         const idea = await Idea.findById(req.params.id);
         res.json(idea);
@@ -37,8 +38,15 @@ router.get('/:id', async (req,res) => {
     } 
 });
 
-router.put('/:id', async (req,res) => {
-
+router.put('/:id',urlencoded, auth, async (req,res) => {
+    console.log(req.body);
+    try{
+        const idea = await Idea.findOneAndUpdate(req.params.id, req.body, {returnOriginal: false});
+        res.sendStatus(200);
+    }
+    catch(e){
+        res.status(500).json({message: e.message});
+    }
 });
 
 module.exports = router;
