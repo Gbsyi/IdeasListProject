@@ -9,6 +9,7 @@ app.use(express.json({ extended: true }));
 const PORT = config.get('port') || 8080;
 
 app.use("/api/auth",require("./routes/auth"));
+app.use("/api/ideas", require("./routes/idea"));
 
 async function start(){
     try{
